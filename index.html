@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengecekan Trafo Harian - RS Hermina Solo</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fef9e7; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 650px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
+        
+        .app-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #fcf3cf;
+        }
+        .app-header h2 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: #b7950b;
+            margin: 0 0 5px 0;
+            font-weight: 600;
+        }
+        .app-header h1 {
+            font-size: 22px;
+            color: #514305;
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+        .status-koneksi { 
+            display: inline-block;
+            background: #eafaf1; 
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px; 
+            color: #27ae60; 
+            font-weight: 600; 
+            border: 1px solid #d4efdf;
+        }
+        
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 14px;}
+        input[type="text"], input[type="date"], input[type="time"], input[type="month"], select, input[type="file"], textarea { 
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; font-family: inherit;
+        }
+        .row-group { display: flex; gap: 10px; }
+        .row-group > div { flex: 1; }
+
+        /* Pilihan Sumber Foto */
+        .photo-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .photo-option-btn {
+            flex: 1;
+            padding: 8px;
+            background: #fcf3cf;
+            border: 1px solid #f9e79f;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #7d6608;
+            cursor: pointer;
+            margin-top: 0;
+        }
+        .photo-option-btn.active {
+            background: #7d6608;
+            color: white;
+            border-color: #514305;
+        }
+
+        button { width: 100%; padding: 12px; background: #d4ac0d; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #b7950b; }
+        button:disabled { background: #95a5a6; cursor: not-allowed; }
+        
+        .action-box { background: #fcf3cf; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f9e79f; margin-top: 30px;}
+        .btn-pdf { background: #7d6608; margin-top: 10px;}
+        .btn-pdf:hover { background: #514305; }
+
+        .rekap-bulan-box { background: #fef5d1; border: 1px solid #f9e79f; padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: center; }
+        .rekap-bulan-box h4 { margin-top: 0; margin-bottom: 8px; color: #7d6608; }
+        .rekap-angka { font-size: 24px; font-weight: bold; color: #b7950b; }
+        
+        .history-card { border: 1px solid #ddd; padding: 12px; border-radius: 5px; margin-bottom: 10px; background: #fafafa; font-size: 13px;}
+        .history-card img { max-width: 100%; height: auto; border-radius: 5px; margin-top: 10px; max-height: 200px; object-fit: contain;}
+        .history-header { display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; color: #b7950b; font-size: 14px;}
+        .loading-text { text-align: center; color: #7f8c8d; font-style: italic; }
+
+        #printArea { display: none; }
+        
+        @media print {
+            body { 
+                background: white; 
+                padding: 0; 
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .container { display: none; } 
+            
+            #printArea { 
+                display: block; 
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                color: #333333;
+                width: 100%;
+            }
+            
+            #printArea h2 { 
+                text-align: center; 
+                color: #1b4f72 !important; 
+                margin: 0; 
+                font-size: 14px; 
+                letter-spacing: 1px; 
+            }
+            #printSubtitle { 
+                text-align: center; 
+                font-style: italic; 
+                color: #666666 !important; 
+                margin: 2px 0 5px 0; 
+                font-size: 10px; 
+            }
+            
+            #printArea table { 
+                width: 100% !important; 
+                max-width: 100% !important;
+                border-collapse: collapse; 
+                table-layout: fixed; 
+                margin-top: 2px;
+            }
+            #printArea th { 
+                background-color: #1b4f72 !important; 
+                color: #ffffff !important; 
+                padding: 4px 3px; 
+                font-size: 9.5px; 
+                text-transform: uppercase; 
+                border: 1px solid #14405c; 
+            }
+            #printArea td { 
+                padding: 2px 3px; 
+                font-size: 8.5px; 
+                text-align: center; 
+                border: 1px solid #a0a0a0; 
+                vertical-align: middle;
+                word-wrap: break-word;
+            }
+            #printArea tbody tr:nth-child(even) { 
+                background-color: #f0f0f0 !important; 
+            }
+
+            #printArea img { 
+                max-height: 28px; 
+                max-width: 100%;
+                object-fit: cover; 
+                border-radius: 2px;
+            }
+
+            @page { 
+                size: A4 portrait; 
+                margin: 5mm; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="app-header">
+        <h2>RS Hermina Solo</h2>
+        <h1>Pengecekan Trafo Harian</h1>
+        <div class="status-koneksi" id="statusInfo">Mengambil data dari server... 🔄</div>
+    </div>
+
+    <form id="formTrafo">
+        <div class="row-group">
+            <div class="form-group">
+                <label>Tanggal Pemeriksaan</label>
+                <input type="date" id="tanggal" required onchange="renderHistory()">
+            </div>
+            <div class="form-group">
+                <label>Jam Pemeriksaan</label>
+                <input type="time" id="jam" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Level Oli Trafo</label>
+            <select id="levelOli" required>
+                <option value="Normal">Normal</option>
+                <option value="Kurang">Kurang</option>
+                <option value="Lebih">Lebih</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Suhu &lt; 80°C</label>
+            <select id="suhuTrafo" required>
+                <option value="Normal (&lt; 80°C)">Normal (&lt; 80°C)</option>
+                <option value="Tidak (&gt;= 80°C)">Tidak (&gt;= 80°C)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Keterangan / Kendala (Opsional)</label>
+            <textarea id="keterangan" rows="2" placeholder="Tuliskan kendala jika ada..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Bukti Foto Trafo</label>
+            <div class="photo-options">
+                <div class="photo-option-btn active" id="btnModeKamera" onclick="setPhotoSource('kamera')">📸 Ambil Foto Langsung</div>
+                <div class="photo-option-btn" id="btnModeGaleri" onclick="setPhotoSource('galeri')">📁 Pilih dari Galeri</div>
+            </div>
+            <input type="file" id="foto" accept="image/*" capture="environment" required>
+        </div>
+        
+        <button type="submit" id="btnSubmit">🚀 Simpan Data Pengecekan Trafo</button>
+    </form>
+
+    <div class="action-box">
+        <label>Unduh Laporan PDF Bulanan Trafo</label>
+        <input type="month" id="filterBulan" onchange="renderHistory()">
+        <button class="btn-pdf" onclick="printPDF()">🖨️ Cetak / Simpan PDF Bulanan</button>
+    </div>
+    
+    <h3 style="color: #7d6608; text-align: center; margin-top: 30px;">Riwayat Pengecekan Trafo</h3>
+    <div id="historyContainer">
+        <p class="loading-text">Sedang memuat data riwayat...</p>
+    </div>
+</div>
+
+<div id="printArea">
+    <h2>RS HERMINA SOLO</h2>
+    <h2>LAPORAN PEMERIKSAAN TRAFO</h2>
+    <p id="printSubtitle">Bulan: -</p>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 20%;">Tgl & Jam</th>
+                <th style="width: 18%;">Level Oli</th>
+                <th style="width: 22%;">Suhu &lt; 80°C</th>
+                <th style="width: 25%;">Keterangan</th>
+                <th style="width: 15%;">Foto</th>
+            </tr>
+        </thead>
+        <tbody id="printTableBody"></tbody>
+    </table>
+</div>
+
+<script>
+    // ⬇️ MASUKKAN URL GOOGLE SCRIPT ANDA DI SINI ⬇️
+    const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbyHRTWA6POILGCnZb_G9dzPd2UVFJ_52jyFfsn4ttWyAy2gt-XmhNElZ2MV2k6E0K3PqA/exec";
+    
+    let globalData = [];
+
+    document.getElementById('tanggal').valueAsDate = new Date();
+    const now = new Date();
+    document.getElementById('jam').value = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    document.getElementById('filterBulan').value = now.getFullYear() + '-' + (now.getMonth() + 1).toString().padStart(2, '0');
+
+    // Fungsi untuk mengganti mode input foto (Kamera Langsung atau Galeri)
+    function setPhotoSource(mode) {
+        const inputFoto = document.getElementById('foto');
+        const btnKamera = document.getElementById('btnModeKamera');
+        const btnGaleri = document.getElementById('btnModeGaleri');
+
+        if (mode === 'kamera') {
+            inputFoto.setAttribute('capture', 'environment');
+            btnKamera.classList.add('active');
+            btnGaleri.classList.remove('active');
+        } else {
+            inputFoto.removeAttribute('capture');
+            btnGaleri.classList.add('active');
+            btnKamera.classList.remove('active');
+        }
+    }
+
+    function formatJamSimpel(jamDb) {
+        if (!jamDb) return "-";
+        if (jamDb.includes('T') || jamDb.includes('1899')) {
+            const dateObj = new Date(jamDb);
+            return `${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
+        }
+        if (jamDb.split(':').length === 3) {
+            const parts = jamDb.split(':');
+            return `${parts[0]}:${parts[1]}`;
+        }
+        return jamDb;
+    }
+
+    function formatTglSimpel(tglDb) {
+        if (!tglDb) return "-";
+        if (tglDb.includes('T')) tglDb = tglDb.split('T')[0];
+        if (tglDb.includes('-')) {
+            const parts = tglDb.split('-');
+            if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        return tglDb;
+    }
+
+    function getBase64Image(file, callback) {
+        if (!file) return callback("");
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 300; 
+                canvas.height = (img.height / img.width) * 300;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                callback(canvas.toDataURL('image/jpeg', 0.5));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function loadDataFromServer() {
+        if(URL_GOOGLE_SCRIPT === "GANTI_DENGAN_URL_ANDA_DI_SINI") {
+            document.getElementById('statusInfo').innerText = "⚠️ URL Google Script Belum Dimasukkan!";
+            document.getElementById('statusInfo').style.color = "red";
+            return;
+        }
+
+        fetch(URL_GOOGLE_SCRIPT)
+            .then(response => response.json())
+            .then(data => {
+                globalData = data;
+                renderHistory();
+                document.getElementById('statusInfo').innerText = "✔️ Terhubung dengan Server (Google Sheets)";
+            })
+            .catch(error => {
+                document.getElementById('statusInfo').innerText = "❌ Gagal memuat data. Cek koneksi internet.";
+                document.getElementById('statusInfo').style.color = "red";
+            });
+    }
+
+    function renderHistory() {
+        const container = document.getElementById('historyContainer');
+        container.innerHTML = '';
+        
+        let selectedBulan = document.getElementById('filterBulan').value;
+        
+        let dataBulanIni = globalData.filter(item => item.tanggal && item.tanggal.startsWith(selectedBulan));
+        let totalDicekBulanIni = dataBulanIni.length;
+
+        let [thnBulan, blnAngka] = selectedBulan.split('-');
+        let namaBlnPilih = new Date(thnBulan, blnAngka - 1).toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+
+        container.innerHTML += `
+            <div class="rekap-bulan-box">
+                <h4>📊 Catatan Pengecekan Bulan ${namaBlnPilih}</h4>
+                <div>Sudah dicek sebanyak:</div>
+                <div class="rekap-angka">${totalDicekBulanIni} Kali</div>
+            </div>
+        `;
+
+        if(dataBulanIni.length === 0) {
+            container.innerHTML += `<p class="loading-text" style="color: #e74c3c;">Belum ada riwayat pengecekan trafo pada bulan ${namaBlnPilih}.</p>`;
+            return;
+        }
+
+        let sortedData = [...dataBulanIni];
+        sortedData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+        
+        sortedData.forEach(item => {
+            let tglSimpel = formatTglSimpel(item.tanggal);
+            let jamSimpel = formatJamSimpel(item.jam);
+
+            container.innerHTML += `
+                <div class="history-card">
+                    <div class="history-header">
+                        <span>Pengecekan Trafo</span>
+                        <span style="font-weight:normal; font-size:12px; color:#555;">${tglSimpel} - ${jamSimpel} WIB</span>
+                    </div>
+                    <div style="font-size: 13px; margin-bottom: 5px;">
+                        <strong>Level Oli:</strong> ${item.levelOli} | <strong>Suhu &lt; 80°C:</strong> ${item.suhuTrafo}
+                    </div>
+                    ${item.keterangan ? `<div style="color: #c0392b; background: #fadbd8; padding: 5px; border-radius: 4px; margin-top: 5px; font-weight: 500;">Ket: ${item.keterangan}</div>` : ''}
+                    ${item.foto ? `<img src="${item.foto}" alt="Foto Trafo">` : ''}
+                </div>
+            `;
+        });
+    }
+
+    document.getElementById('formTrafo').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('btnSubmit');
+        btn.innerText = "⏳ Sedang mengirim...";
+        btn.disabled = true;
+
+        const file = document.getElementById('foto').files[0];
+        getBase64Image(file, function(base64Foto) {
+            const data = {
+                tanggal: document.getElementById('tanggal').value,
+                jam: document.getElementById('jam').value,
+                levelOli: document.getElementById('levelOli').value,
+                suhuTrafo: document.getElementById('suhuTrafo').value,
+                keterangan: document.getElementById('keterangan').value,
+                foto: base64Foto
+            };
+
+            fetch(URL_GOOGLE_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                alert('Berhasil! Data Pengecekan Trafo tersimpan.');
+                document.getElementById('formTrafo').reset();
+                document.getElementById('tanggal').valueAsDate = new Date();
+                btn.innerText = "🚀 Simpan Data Pengecekan Trafo";
+                btn.disabled = false;
+                
+                document.getElementById('historyContainer').innerHTML = '<p class="loading-text">Memperbarui riwayat dari server...</p>';
+                setTimeout(loadDataFromServer, 2000); 
+            })
+            .catch(error => {
+                alert('Gagal mengirim data. Pastikan ada sinyal internet.');
+                btn.innerText = "🚀 Simpan Data Pengecekan Trafo";
+                btn.disabled = false;
+            });
+        });
+    });
+
+    function printPDF() {
+        const filterBulan = document.getElementById('filterBulan').value; 
+        if(!filterBulan) return alert('Pilih bulan terlebih dahulu!');
+        
+        const [tahun, bulan] = filterBulan.split('-');
+        const namaBulan = new Date(tahun, bulan - 1).toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+        
+        const jumlahHariDalamBulan = new Date(tahun, bulan, 0).getDate();
+        let filteredData = globalData.filter(item => item.tanggal && item.tanggal.startsWith(filterBulan));
+        
+        document.getElementById('printSubtitle').innerText = `Periode Bulan: ${namaBulan}`;
+
+        const tbody = document.getElementById('printTableBody');
+        tbody.innerHTML = '';
+
+        for (let hari = 1; hari <= jumlahHariDalamBulan; hari++) {
+            let hariStr = hari.toString().padStart(2, '0');
+            
+            let tanggalDatabase = `${tahun}-${bulan}-${hariStr}`;
+            let tanggalTampil = `${hariStr}/${bulan}/${tahun}`;
+            
+            let dataHariIni = filteredData.filter(item => item.tanggal.startsWith(tanggalDatabase));
+            
+            if (dataHariIni.length > 0) {
+                dataHariIni.forEach(item => {
+                    let jamSimpel = formatJamSimpel(item.jam);
+                    let imgTag = (item.foto && item.foto.length > 20) ? `<img src="${item.foto}">` : '';
+                    
+                    let row = `
+                        <tr>
+                            <td>${tanggalTampil}<br>${jamSimpel}</td>
+                            <td>${item.levelOli}</td>
+                            <td>${item.suhuTrafo}</td>
+                            <td>${item.keterangan || '-'}</td>
+                            <td>${imgTag}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } else {
+                let row = `
+                    <tr>
+                        <td>${tanggalTampil}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            }
+        }
+
+        window.print();
+    }
+
+    window.onload = loadDataFromServer;
+</script>
+</body>
+</html>
