@@ -3,91 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengecekan Trafo Harian - RS Hermina Solo</title>
+    <title>Laporan Pengecekan Trafo Harian - RS Hermina Solo</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fef9e7; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 650px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
+        :root {
+            --hermina-blue: #0055A4;
+            --hermina-blue-dark: #003f7f;
+            --hermina-red: #D32F2F;
+            --hermina-red-dark: #B71C1C;
+            --bg-color: #f4f7f6;
+            --container-bg: #ffffff;
+            --text-color: #333333;
+            --label-color: #555555;
+            --border-color: #ddd;
+            --input-border-color: #ccc;
+            --shadow: 0 4px 12px rgba(0,0,0,0.06);
+            --radius: 10px;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-color); 
+            margin: 0; 
+            padding: 20px; 
+            color: var(--text-color); 
+            line-height: 1.5;
+        }
+
+        .container { 
+            max-width: 680px; 
+            margin: auto; 
+            background: var(--container-bg); 
+            padding: 30px; 
+            border-radius: var(--radius); 
+            box-shadow: var(--shadow); 
+        }
         
         .app-header {
             text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #fcf3cf;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
         }
-        .app-header h2 {
-            font-size: 13px;
+        .app-header .rs-name {
+            font-size: 15px;
             text-transform: uppercase;
-            letter-spacing: 2.5px;
-            color: #b7950b;
+            letter-spacing: 2px;
+            color: var(--hermina-blue);
             margin: 0 0 5px 0;
             font-weight: 600;
         }
         .app-header h1 {
-            font-size: 22px;
-            color: #514305;
-            margin: 0 0 10px 0;
+            font-size: 26px;
+            color: var(--text-color);
+            margin: 0 0 15px 0;
             font-weight: 700;
         }
-        .status-koneksi { 
-            display: inline-block;
+        .status-badge { 
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             background: #eafaf1; 
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px; 
+            padding: 6px 14px;
+            border-radius: 25px;
+            font-size: 12px; 
             color: #27ae60; 
             font-weight: 600; 
             border: 1px solid #d4efdf;
         }
-        
-        .form-group { margin-bottom: 15px; }
-        label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 14px;}
-        input[type="text"], input[type="date"], input[type="time"], input[type="month"], select, input[type="file"], textarea { 
-            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; font-family: inherit;
+        .status-badge.error {
+            background: #fdf2f2;
+            color: #c0392b;
+            border-color: #fadbd8;
         }
-        .row-group { display: flex; gap: 10px; }
+        
+        .form-group { margin-bottom: 18px; }
+        label { font-weight: 600; display: block; margin-bottom: 6px; font-size: 14px; color: var(--label-color); }
+        input[type="text"], input[type="date"], input[type="time"], input[type="month"], select, textarea { 
+            width: 100%; padding: 12px; border: 1px solid var(--input-border-color); border-radius: 6px; box-sizing: border-box; font-size: 15px; font-family: inherit; transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--hermina-blue);
+        }
+        .row-group { display: flex; gap: 15px; }
         .row-group > div { flex: 1; }
 
-        /* Pilihan Sumber Foto */
-        .photo-options {
+        /* Area Input Foto Spesifik (Meniru image_0.png) */
+        .photo-capture-section {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #fafafa;
+        }
+        .photo-btns-row {
             display: flex;
-            gap: 10px;
-            margin-bottom: 8px;
+            gap: 15px;
+            margin-top: 10px;
         }
-        .photo-option-btn {
+        .photo-btn {
             flex: 1;
-            padding: 8px;
-            background: #fcf3cf;
-            border: 1px solid #f9e79f;
-            border-radius: 5px;
+            padding: 18px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             text-align: center;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
-            color: #7d6608;
+            color: var(--hermina-blue);
             cursor: pointer;
-            margin-top: 0;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin: 0;
         }
-        .photo-option-btn.active {
-            background: #7d6608;
-            color: white;
-            border-color: #514305;
+        .photo-btn:hover {
+            border-color: var(--hermina-blue);
+            background-color: #f9fcff;
+            transform: translateY(-1px);
+        }
+        .photo-status {
+            font-size: 13px;
+            color: #777;
+            text-align: center;
+            margin-top: 12px;
         }
 
-        button { width: 100%; padding: 12px; background: #d4ac0d; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        button:hover { background: #b7950b; }
-        button:disabled { background: #95a5a6; cursor: not-allowed; }
+        button.main-btn { width: 100%; padding: 14px; background: var(--hermina-blue); color: white; border: none; border-radius: 6px; font-size: 17px; cursor: pointer; font-weight: bold; margin-top: 15px; transition: background 0.2s, transform 0.1s; }
+        button.main-btn:hover { background: var(--hermina-blue-dark); }
+        button.main-btn:active { transform: translateY(1px); }
+        button.main-btn:disabled { background: #95a5a6; cursor: not-allowed; }
         
-        .action-box { background: #fcf3cf; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f9e79f; margin-top: 30px;}
-        .btn-pdf { background: #7d6608; margin-top: 10px;}
-        .btn-pdf:hover { background: #514305; }
+        .action-box { 
+            background: #fafafa; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin-bottom: 30px; 
+            border: 1px solid var(--border-color); 
+            margin-top: 40px;
+        }
+        .btn-pdf { background: var(--hermina-red); color: white; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: bold; padding: 12px; width: auto; margin-top: 15px; width: 100%; transition: background 0.2s; }
+        .btn-pdf:hover { background: var(--hermina-red-dark); }
 
-        .rekap-bulan-box { background: #fef5d1; border: 1px solid #f9e79f; padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: center; }
-        .rekap-bulan-box h4 { margin-top: 0; margin-bottom: 8px; color: #7d6608; }
-        .rekap-angka { font-size: 24px; font-weight: bold; color: #b7950b; }
+        .rekap-bulan-box { background: white; border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+        .rekap-bulan-box h4 { margin-top: 0; margin-bottom: 10px; color: var(--hermina-blue); font-size: 16px; }
+        .rekap-angka { font-size: 28px; font-weight: bold; color: var(--hermina-blue-dark); }
         
-        .history-card { border: 1px solid #ddd; padding: 12px; border-radius: 5px; margin-bottom: 10px; background: #fafafa; font-size: 13px;}
-        .history-card img { max-width: 100%; height: auto; border-radius: 5px; margin-top: 10px; max-height: 200px; object-fit: contain;}
-        .history-header { display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 10px; color: #b7950b; font-size: 14px;}
-        .loading-text { text-align: center; color: #7f8c8d; font-style: italic; }
+        .history-card { border: 1px solid var(--border-color); padding: 18px; border-radius: 8px; margin-bottom: 15px; background: white; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+        .history-card img { max-width: 100%; height: auto; border-radius: 6px; margin-top: 15px; max-height: 250px; object-fit: contain; border: 1px solid var(--border-color); }
+        .history-header { display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px; color: var(--hermina-blue); font-size: 15px;}
+        .history-header .date-time { font-weight:normal; font-size:13px; color:#666; }
+        .loading-text { text-align: center; color: #888; font-style: italic; margin-top: 20px; }
 
         #printArea { display: none; }
         
@@ -109,17 +173,18 @@
             
             #printArea h2 { 
                 text-align: center; 
-                color: #1b4f72 !important; 
+                color: #003f7f !important; 
                 margin: 0; 
-                font-size: 14px; 
-                letter-spacing: 1px; 
+                font-size: 16px; 
+                letter-spacing: 1.5px; 
             }
+            #printArea h2.sub { font-size: 14px; color: var(--text-color) !important; margin-top: 5px; }
             #printSubtitle { 
                 text-align: center; 
                 font-style: italic; 
                 color: #666666 !important; 
-                margin: 2px 0 5px 0; 
-                font-size: 10px; 
+                margin: 5px 0 10px 0; 
+                font-size: 11px; 
             }
             
             #printArea table { 
@@ -127,38 +192,38 @@
                 max-width: 100% !important;
                 border-collapse: collapse; 
                 table-layout: fixed; 
-                margin-top: 2px;
+                margin-top: 5px;
             }
             #printArea th { 
-                background-color: #1b4f72 !important; 
+                background-color: #003f7f !important; 
                 color: #ffffff !important; 
-                padding: 4px 3px; 
-                font-size: 9.5px; 
+                padding: 6px 4px; 
+                font-size: 10px; 
                 text-transform: uppercase; 
-                border: 1px solid #14405c; 
+                border: 1px solid #002e5c; 
             }
             #printArea td { 
-                padding: 2px 3px; 
-                font-size: 8.5px; 
+                padding: 4px 4px; 
+                font-size: 9px; 
                 text-align: center; 
-                border: 1px solid #a0a0a0; 
+                border: 1px solid #b0b0b0; 
                 vertical-align: middle;
                 word-wrap: break-word;
             }
             #printArea tbody tr:nth-child(even) { 
-                background-color: #f0f0f0 !important; 
+                background-color: #f6f8f9 !important; 
             }
 
             #printArea img { 
-                max-height: 28px; 
+                max-height: 35px; 
                 max-width: 100%;
                 object-fit: cover; 
-                border-radius: 2px;
+                border-radius: 3px;
             }
 
             @page { 
                 size: A4 portrait; 
-                margin: 5mm; 
+                margin: 10mm; 
             }
         }
     </style>
@@ -167,9 +232,11 @@
 
 <div class="container">
     <div class="app-header">
-        <h2>RS Hermina Solo</h2>
+        <div class="rs-name">RS Hermina Solo</div>
         <h1>Pengecekan Trafo Harian</h1>
-        <div class="status-koneksi" id="statusInfo">Mengambil data dari server... 🔄</div>
+        <div class="status-badge" id="statusInfo">
+            <span>Mengambil data dari server... 🔄</span>
+        </div>
     </div>
 
     <form id="formTrafo">
@@ -203,28 +270,33 @@
 
         <div class="form-group">
             <label>Keterangan / Kendala (Opsional)</label>
-            <textarea id="keterangan" rows="2" placeholder="Tuliskan kendala jika ada..."></textarea>
+            <textarea id="keterangan" rows="3" placeholder="Tuliskan kendala jika ada..."></textarea>
         </div>
         
+        <!-- Bagian Input Foto Baru (Persis seperti image_0.png) -->
         <div class="form-group">
-            <label>Bukti Foto Trafo</label>
-            <div class="photo-options">
-                <div class="photo-option-btn active" id="btnModeKamera" onclick="setPhotoSource('kamera')">📸 Ambil Foto Langsung</div>
-                <div class="photo-option-btn" id="btnModeGaleri" onclick="setPhotoSource('galeri')">📁 Pilih dari Galeri</div>
+            <label>Bukti Foto Trafo (Opsional)</label>
+            <div class="photo-capture-section">
+                <div class="photo-btns-row">
+                    <button type="button" class="photo-btn" id="takePhotoBtn">📸 AMBIL FOTO LANGSUNG</button>
+                    <button type="button" class="photo-btn" id="choosePhotoBtn">🖼️ PILIH DI GALERI</button>
+                </div>
+                <div class="photo-status" id="photoStatusText">Belum ada foto yang dipilih.</div>
+                <!-- Input file asli disembunyikan -->
+                <input type="file" id="foto" accept="image/*" style="display: none;">
             </div>
-            <input type="file" id="foto" accept="image/*" capture="environment" required>
         </div>
         
-        <button type="submit" id="btnSubmit">🚀 Simpan Data Pengecekan Trafo</button>
+        <button type="submit" class="main-btn" id="btnSubmit">🚀 Simpan Data Pengecekan</button>
     </form>
 
     <div class="action-box">
         <label>Unduh Laporan PDF Bulanan Trafo</label>
         <input type="month" id="filterBulan" onchange="renderHistory()">
-        <button class="btn-pdf" onclick="printPDF()">🖨️ Cetak / Simpan PDF Bulanan</button>
+        <button class="btn-pdf" onclick="printPDF()">🖨️ CETAK / SIMPAN PDF BULANAN</button>
     </div>
     
-    <h3 style="color: #7d6608; text-align: center; margin-top: 30px;">Riwayat Pengecekan Trafo</h3>
+    <h3 style="color: var(--hermina-blue); text-align: center; margin-top: 40px; font-weight: 700;">Riwayat Pengecekan Trafo</h3>
     <div id="historyContainer">
         <p class="loading-text">Sedang memuat data riwayat...</p>
     </div>
@@ -232,15 +304,15 @@
 
 <div id="printArea">
     <h2>RS HERMINA SOLO</h2>
-    <h2>LAPORAN PEMERIKSAAN TRAFO</h2>
-    <p id="printSubtitle">Bulan: -</p>
+    <h2 class="sub">LAPORAN PEMERIKSAAN TRAFO</h2>
+    <p id="printSubtitle">Periode Bulan: -</p>
     <table>
         <thead>
             <tr>
-                <th style="width: 20%;">Tgl & Jam</th>
+                <th style="width: 18%;">Tgl & Jam</th>
                 <th style="width: 18%;">Level Oli</th>
                 <th style="width: 22%;">Suhu &lt; 80°C</th>
-                <th style="width: 25%;">Keterangan</th>
+                <th style="width: 27%;">Keterangan</th>
                 <th style="width: 15%;">Foto</th>
             </tr>
         </thead>
@@ -254,28 +326,40 @@
     
     let globalData = [];
 
+    // Inisialisasi tanggal dan bulan
     document.getElementById('tanggal').valueAsDate = new Date();
     const now = new Date();
     document.getElementById('jam').value = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
     document.getElementById('filterBulan').value = now.getFullYear() + '-' + (now.getMonth() + 1).toString().padStart(2, '0');
 
-    // Fungsi untuk mengganti mode input foto (Kamera Langsung atau Galeri)
-    function setPhotoSource(mode) {
-        const inputFoto = document.getElementById('foto');
-        const btnKamera = document.getElementById('btnModeKamera');
-        const btnGaleri = document.getElementById('btnModeGaleri');
+    // Fungsionalitas Tombol Foto Baru (Jembatan ke Input File Tersembunyi)
+    const takePhotoBtn = document.getElementById('takePhotoBtn');
+    const choosePhotoBtn = document.getElementById('choosePhotoBtn');
+    const fotoInput = document.getElementById('foto');
+    const photoStatusText = document.getElementById('photoStatusText');
 
-        if (mode === 'kamera') {
-            inputFoto.setAttribute('capture', 'environment');
-            btnKamera.classList.add('active');
-            btnGaleri.classList.remove('active');
+    takePhotoBtn.addEventListener('click', () => {
+        fotoInput.setAttribute('capture', 'environment');
+        fotoInput.click(); // Memicu input file
+    });
+
+    choosePhotoBtn.addEventListener('click', () => {
+        fotoInput.removeAttribute('capture');
+        fotoInput.click(); // Memicu input file
+    });
+
+    // Memperbarui status teks saat file dipilih
+    fotoInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            photoStatusText.innerText = 'Foto dipilih: ' + this.files[0].name;
+            photoStatusText.style.color = '#0055A4'; // Warna Hermina Blue untuk konfirmasi
         } else {
-            inputFoto.removeAttribute('capture');
-            btnGaleri.classList.add('active');
-            btnKamera.classList.remove('active');
+            photoStatusText.innerText = 'Belum ada foto yang dipilih.';
+            photoStatusText.style.color = '#777';
         }
-    }
+    });
 
+    // Fungsi-fungsi pembantu yang ada
     function formatJamSimpel(jamDb) {
         if (!jamDb) return "-";
         if (jamDb.includes('T') || jamDb.includes('1899')) {
@@ -307,20 +391,23 @@
             img.onload = function() {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                canvas.width = 300; 
-                canvas.height = (img.height / img.width) * 300;
+                const MAX_WIDTH = 500; // Tingkatkan sedikit kualitas dibanding sebelumnya
+                canvas.width = MAX_WIDTH; 
+                canvas.height = (img.height / img.width) * MAX_WIDTH;
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                callback(canvas.toDataURL('image/jpeg', 0.5));
+                callback(canvas.toDataURL('image/jpeg', 0.6)); // Kualitas 60%
             };
             img.src = e.target.result;
         };
         reader.readAsDataURL(file);
     }
 
+    // Fungsi-fungsi data server yang diperbarui desainnya
     function loadDataFromServer() {
+        const statusDiv = document.getElementById('statusInfo');
         if(URL_GOOGLE_SCRIPT === "GANTI_DENGAN_URL_ANDA_DI_SINI") {
-            document.getElementById('statusInfo').innerText = "⚠️ URL Google Script Belum Dimasukkan!";
-            document.getElementById('statusInfo').style.color = "red";
+            statusDiv.innerHTML = "⚠️ URL Google Script Belum Dimasukkan!";
+            statusDiv.classList.add('error');
             return;
         }
 
@@ -329,11 +416,12 @@
             .then(data => {
                 globalData = data;
                 renderHistory();
-                document.getElementById('statusInfo').innerText = "✔️ Terhubung dengan Server (Google Sheets)";
+                statusDiv.innerHTML = "<span>✔️ Terhubung dengan Server (Google Sheets)</span>";
+                statusDiv.classList.remove('error');
             })
             .catch(error => {
-                document.getElementById('statusInfo').innerText = "❌ Gagal memuat data. Cek koneksi internet.";
-                document.getElementById('statusInfo').style.color = "red";
+                statusDiv.innerHTML = "❌ Gagal memuat data. Cek koneksi internet.";
+                statusDiv.classList.add('error');
             });
     }
 
@@ -358,7 +446,7 @@
         `;
 
         if(dataBulanIni.length === 0) {
-            container.innerHTML += `<p class="loading-text" style="color: #e74c3c;">Belum ada riwayat pengecekan trafo pada bulan ${namaBlnPilih}.</p>`;
+            container.innerHTML += `<p class="loading-text" style="color: var(--hermina-red);">Belum ada riwayat pengecekan trafo pada bulan ${namaBlnPilih}.</p>`;
             return;
         }
 
@@ -373,18 +461,19 @@
                 <div class="history-card">
                     <div class="history-header">
                         <span>Pengecekan Trafo</span>
-                        <span style="font-weight:normal; font-size:12px; color:#555;">${tglSimpel} - ${jamSimpel} WIB</span>
+                        <span class="date-time">${tglSimpel} - ${jamSimpel} WIB</span>
                     </div>
-                    <div style="font-size: 13px; margin-bottom: 5px;">
+                    <div style="margin-bottom: 8px;">
                         <strong>Level Oli:</strong> ${item.levelOli} | <strong>Suhu &lt; 80°C:</strong> ${item.suhuTrafo}
                     </div>
-                    ${item.keterangan ? `<div style="color: #c0392b; background: #fadbd8; padding: 5px; border-radius: 4px; margin-top: 5px; font-weight: 500;">Ket: ${item.keterangan}</div>` : ''}
+                    ${item.keterangan ? `<div style="color: #c0392b; background: #fadbd8; padding: 8px; border-radius: 4px; margin-top: 8px; font-weight: 500;">Ket: ${item.keterangan}</div>` : ''}
                     ${item.foto ? `<img src="${item.foto}" alt="Foto Trafo">` : ''}
                 </div>
             `;
         });
     }
 
+    // Submit handler disesuaikan dengan input file tersembunyi
     document.getElementById('formTrafo').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -392,7 +481,7 @@
         btn.innerText = "⏳ Sedang mengirim...";
         btn.disabled = true;
 
-        const file = document.getElementById('foto').files[0];
+        const file = fotoInput.files[0]; // Gunakan input file tersembunyi
         getBase64Image(file, function(base64Foto) {
             const data = {
                 tanggal: document.getElementById('tanggal').value,
@@ -411,8 +500,12 @@
             .then(() => {
                 alert('Berhasil! Data Pengecekan Trafo tersimpan.');
                 document.getElementById('formTrafo').reset();
+                photoStatusText.innerText = 'Belum ada foto yang dipilih.';
+                photoStatusText.style.color = '#777';
                 document.getElementById('tanggal').valueAsDate = new Date();
-                btn.innerText = "🚀 Simpan Data Pengecekan Trafo";
+                const nowReset = new Date();
+                document.getElementById('jam').value = nowReset.getHours().toString().padStart(2, '0') + ':' + nowReset.getMinutes().toString().padStart(2, '0');
+                btn.innerText = "🚀 Simpan Data Pengecekan";
                 btn.disabled = false;
                 
                 document.getElementById('historyContainer').innerHTML = '<p class="loading-text">Memperbarui riwayat dari server...</p>';
@@ -420,12 +513,13 @@
             })
             .catch(error => {
                 alert('Gagal mengirim data. Pastikan ada sinyal internet.');
-                btn.innerText = "🚀 Simpan Data Pengecekan Trafo";
+                btn.innerText = "🚀 Simpan Data Pengecekan";
                 btn.disabled = false;
             });
         });
     });
 
+    // Fungsi print tidak berubah
     function printPDF() {
         const filterBulan = document.getElementById('filterBulan').value; 
         if(!filterBulan) return alert('Pilih bulan terlebih dahulu!');
